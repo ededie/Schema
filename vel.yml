@@ -8,7 +8,7 @@ info:
     url: https://opensource.org/licenses/MIT
 
 servers:
-  - url: https://api.vel-research.ai/v1
+  - url: "https://api.vel-research.ai/v1"
 
 paths:
   /run-pipeline:
@@ -167,3 +167,4 @@ components:
           type: object
         semantic_bridge:
           type: object
+
