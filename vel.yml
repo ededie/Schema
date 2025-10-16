@@ -1,0 +1,169 @@
+openapi: 3.1.0
+info:
+  title: VEL Research API
+  description: API publik untuk pipeline reflektif, proofreader, dan analisis blok epistemik di sistem VEL.
+  version: 1.0.0
+  license:
+    name: MIT License
+    url: https://opensource.org/licenses/MIT
+
+servers:
+  - url: https://api.vel-research.ai/v1
+
+paths:
+  /run-pipeline:
+    post:
+      tags: [Pipeline]
+      summary: Jalankan pipeline utama VEL
+      operationId: runPipeline
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RunPipelineRequest"
+      responses:
+        "200":
+          description: Respons output pipeline akademik
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RunPipelineResponse"
+
+  /proofread-highlight:
+    post:
+      tags: [Proofreading]
+      summary: Highlight proofreading dan refleksi gaya akademik
+      operationId: proofreadHighlight
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProofreadRequest"
+      responses:
+        "200":
+          description: Highlight hasil proofreading
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProofreadResponse"
+
+  /analyze-block:
+    post:
+      tags: [Block Analysis]
+      summary: Analisis blok narasi reflektif dan struktur epistemik
+      operationId: analyzeBlock
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyzeBlockRequest"
+      responses:
+        "200":
+          description: Hasil analisis blok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyzeBlockResponse"
+
+components:
+  schemas:
+
+    RunPipelineRequest:
+      type: object
+      description: Permintaan untuk menjalankan pipeline IMRaD reflektif secara penuh atau blok individual
+      properties:
+        user_input:
+          type: string
+          description: Input utama pengguna (judul, hipotesis, narasi singkat)
+        persona:
+          type: string
+          description: Mode persona narasi (misal: Q1_REFLEX_KONSISTEN)
+        journal_target:
+          type: string
+          description: Target jurnal (misal: ERVET, Springer, Elsevier)
+        user_refs:
+          type: array
+          items:
+            type: string
+          description: Daftar referensi utama (DOI, URL)
+        local_zip_path:
+          type: string
+          description: Jalur file ZIP sistem modular (misal: /mnt/data/o_extracted/Q1_IMRaD_SYSTEM_FINAL)
+        block_focus:
+          type: string
+          description: ID blok yang ingin dijalankan saja (misal: I1, RD3.3, C1)
+        auto_compile_imrad:
+          type: boolean
+          description: Apakah akan kompilasi semua blok IMRaD secara otomatis
+      required: [user_input]
+
+    RunPipelineResponse:
+      type: object
+      description: Output dari pipeline VEL setelah eksekusi
+      properties:
+        draft:
+          type: string
+          description: Naskah akademik hasil sistem
+        ai_score:
+          type: number
+          description: Skor AI-likeness atau deteksi generatif
+        epistemic_map:
+          type: string
+          description: Peta struktur epistemik & reflektif
+        ai_declaration:
+          type: string
+          description: Pernyataan keterlibatan AI
+
+    ProofreadRequest:
+      type: object
+      description: Permintaan proofreading reflektif
+      properties:
+        text:
+          type: string
+      required: [text]
+
+    ProofreadResponse:
+      type: object
+      description: Hasil analisis kalimat reflektif & gaya proofing
+      properties:
+        highlights:
+          type: array
+          items:
+            type: object
+            properties:
+              sentence:
+                type: string
+              category:
+                type: string
+              suggestion:
+                type: string
+
+    AnalyzeBlockRequest:
+      type: object
+      description: Permintaan analisis satu blok (logika, epistemik, metafora, refleksi)
+      properties:
+        block_type:
+          type: string
+          description: ID blok yang dianalisis (contoh: RD3.3, C1)
+        content:
+          type: string
+          description: Isi blok untuk dianalisis
+      required: [block_type, content]
+
+    AnalyzeBlockResponse:
+      type: object
+      description: Respons evaluasi blok IMRaD reflektif
+      properties:
+        common_sense_check:
+          type: object
+        metaphor_check:
+          type: object
+        epistemic_ethics:
+          type: object
+        logic_structure:
+          type: object
+        semantic_bridge:
+          type: object
